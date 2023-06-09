@@ -7,7 +7,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-	  "build:ui": "@powershell rm build -r -force && cd ../../FSO/Osa2/puhelinluettelo && npm run build && @powershell Copy-Item build ../../../FullStackOsa3/backend -r",
+	  "build:ui": "@powershell rm build -r -force && cd ../FSO/Osa2/puhelinluettelo && npm run build && @powershell Copy-Item build ../../../FullStackOsa3 -r",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
   }
   ,
