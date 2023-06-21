@@ -7,10 +7,9 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-	  "build:ui": "@powershell rm build -r -force && cd ../FSO/Osa2/puhelinluettelo && npm run build && @powershell Copy-Item build ../../../FullStackOsa3 -r",
+    "build:ui": "@powershell rm build -r -force && cd ../FSO/Osa2/puhelinluettelo && npm run build && @powershell Copy-Item build ../../../FullStackOsa3 -r",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
-  }
-  ,
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eepek/FullStackOsa3.git"
@@ -23,7 +22,9 @@
   "homepage": "https://github.com/eepek/FullStackOsa3#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "mongoose": "^7.2.2",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
