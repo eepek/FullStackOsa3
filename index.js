@@ -64,8 +64,6 @@ app.get('/info', morgan('tiny'), (req, resp) => {
         })
         .catch(error => next(error))
     })
-    // resp.send(`Phonebook has info for ${contacts.length} people<br>
-    // ${new Date()}`)
 
 
 app.get('/api/persons/:id', morgan('tiny'), (req, resp, next) => {
@@ -83,12 +81,6 @@ app.get('/api/persons/:id', morgan('tiny'), (req, resp, next) => {
 app.post('/api/persons/', morgan(':method :url :status :res[content-length] - :response-time ms :contact'), (req, resp,next) => {
     
 
-    // if (!req.body.name || !req.body.number) {
-    //     return resp.status(400).json( {
-    //         error: "Contact must include name and number!"
-    //     })
-    // }
-
     const contact = new Contact({
         name: req.body.name, 
         number: req.body.number,
@@ -102,12 +94,9 @@ app.post('/api/persons/', morgan(':method :url :status :res[content-length] - :r
 })
 
 app.put('/api/persons/:id', morgan('tiny'), (req, resp, next) => {
-    const contact = {
-        name: req.body.name,
-        number: req.body.number
-    }
+    const { name, number } = request.body
 
-    Contact.findByIdAndUpdate(req.params.id, contact, {new: true})
+    Contact.findByIdAndUpdate(req.params.id, {name, number}, {new: true, runValidators: true, context: 'query'})
         .then(updatedContact => {
             resp.json(updatedContact)
         })

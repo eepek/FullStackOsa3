@@ -26,11 +26,6 @@ const contactSchema = new mongoose.Schema({
     validate: {
       validator: phonenumber => {
         return /^\d{2,3}-\d{5,}$/.test(phonenumber)
-        // if (/\d{3}[-]\d{5,}/.test(phonenumber) || /\d{2}[-]\d{6,}/.test(phonenumber)) {
-        //   return true
-        // } else {
-        //   return false
-        // }
       }
     }
 
