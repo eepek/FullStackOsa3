@@ -94,9 +94,12 @@ app.post('/api/persons/', morgan(':method :url :status :res[content-length] - :r
 })
 
 app.put('/api/persons/:id', morgan('tiny'), (req, resp, next) => {
-    const { name, number } = request.body
+    const contact = {
+        name: req.body.name,
+        number: req.body.number
+    }
 
-    Contact.findByIdAndUpdate(req.params.id, {name, number}, {new: true, runValidators: true, context: 'query'})
+    Contact.findByIdAndUpdate(req.params.id, contact, {new: true, runValidators: true, context: 'query'})
         .then(updatedContact => {
             resp.json(updatedContact)
         })
