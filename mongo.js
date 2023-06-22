@@ -26,7 +26,7 @@ if (!process.argv[3]) {
     result.forEach(person => {
       console.log(person.name, person.number)
     })
-  mongoose.connection.close()
+    mongoose.connection.close()
   })
 } else {
   const contactName = process.argv[3]
@@ -37,10 +37,10 @@ if (!process.argv[3]) {
     number: contactNumber,
   })
 
-  contact.save().then(result => {
+  contact.save().then(() => {
     console.log(`added ${contactName} number ${contactNumber} to phonebook`)
-  mongoose.connection.close()
-})
+    mongoose.connection.close()
+  })
 }
 
 

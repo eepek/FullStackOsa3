@@ -32,14 +32,14 @@ const app = express()
 
 // ]
 
-morgan.token('contact', function (req, res) {
-    const name = req.body.name
-    const number = req.body.number
-    if (req.method === 'POST') {
-        return JSON.stringify({'name': name, 'number': number})
-    } else {
-        return ""
-    }
+morgan.token('contact', function (req) {
+  const name = req.body.name
+  const number = req.body.number
+  if (req.method === 'POST') {
+    return JSON.stringify({ 'name': name, 'number': number })
+  } else {
+    return ''
+  }
 })
 
 app.use(express.static('build'))
@@ -51,84 +51,84 @@ app.use(cors())
 
 
 app.get('/api/persons', morgan('tiny'), (req, resp) => {
-    Contact.find({}).then(contact_info => {
-        resp.json(contact_info)
-    })
+  Contact.find({}).then(contact_info => {
+    resp.json(contact_info)
+  })
 })
 
-app.get('/info', morgan('tiny'), (req, resp) => {
-    Contact.countDocuments()
-        .then(count => {
-            resp.send(`Phonebook has info for ${count} people<br>
+app.get('/info', morgan('tiny'), (req, resp, next) => {
+  Contact.countDocuments()
+    .then(count => {
+      resp.send(`Phonebook has info for ${count} people<br>
             // ${new Date()}`)
-        })
-        .catch(error => next(error))
-    })
-
-
-app.get('/api/persons/:id', morgan('tiny'), (req, resp, next) => {
-    Contact.findById(req.params.id)
-        .then(person => {
-            if (person) {
-                resp.json(person)
-            } else {
-                resp.status(404).end()
-            }
-        })
-        .catch(error => next(error))
-})
-
-app.post('/api/persons/', morgan(':method :url :status :res[content-length] - :response-time ms :contact'), (req, resp,next) => {
-    
-
-    const contact = new Contact({
-        name: req.body.name, 
-        number: req.body.number,
-    })
-
-    contact.save()
-        .then(savedContact => {
-            resp.json(savedContact)
-        })
-        .catch(error => next(error))
-})
-
-app.put('/api/persons/:id', morgan('tiny'), (req, resp, next) => {
-    const contact = {
-        name: req.body.name,
-        number: req.body.number
-    }
-
-    Contact.findByIdAndUpdate(req.params.id, contact, {new: true, runValidators: true, context: 'query'})
-        .then(updatedContact => {
-            resp.json(updatedContact)
-        })
-        .catch(error => next(error))
-})
-
-app.delete('/api/persons/:id', morgan('tiny'), (req,resp) => {
-    Contact.findByIdAndDelete(req.params.id)
-    .then(result => {
-        resp.status(204).end()
     })
     .catch(error => next(error))
 })
 
-const unknownEndpoint = (req, resp, next) => {
-    response.status(404).send({error: 'unknown endpoint'})
+
+app.get('/api/persons/:id', morgan('tiny'), (req, resp, next) => {
+  Contact.findById(req.params.id)
+    .then(person => {
+      if (person) {
+        resp.json(person)
+      } else {
+        resp.status(404).end()
+      }
+    })
+    .catch(error => next(error))
+})
+
+app.post('/api/persons/', morgan(':method :url :status :res[content-length] - :response-time ms :contact'), (req, resp,next) => {
+
+
+  const contact = new Contact({
+    name: req.body.name,
+    number: req.body.number,
+  })
+
+  contact.save()
+    .then(savedContact => {
+      resp.json(savedContact)
+    })
+    .catch(error => next(error))
+})
+
+app.put('/api/persons/:id', morgan('tiny'), (req, resp, next) => {
+  const contact = {
+    name: req.body.name,
+    number: req.body.number
+  }
+
+  Contact.findByIdAndUpdate(req.params.id, contact, { new: true, runValidators: true, context: 'query' })
+    .then(updatedContact => {
+      resp.json(updatedContact)
+    })
+    .catch(error => next(error))
+})
+
+app.delete('/api/persons/:id', morgan('tiny'), (req,resp, next) => {
+  Contact.findByIdAndDelete(req.params.id)
+    .then(() => {
+      resp.status(204).end()
+    })
+    .catch(error => next(error))
+})
+
+const unknownEndpoint = resp => {
+  resp.status(404).send({ error: 'unknown endpoint' })
 }
 
 app.use(unknownEndpoint)
 
 const errorHandler = (error, req, resp, next) => {
-    // console.log(error)
+  // console.log(error)
 
-    if (error.name === 'CastError') {
-        return resp.status(400).send({error: 'wrong id'})
-    } else if (error.name === 'ValidationError') {
-        return resp.status(400).json(error.message)
-    }
-    next(error)
+  if (error.name === 'CastError') {
+    return resp.status(400).send({ error: 'wrong id' })
+  } else if (error.name === 'ValidationError') {
+    return resp.status(400).json(error.message)
+  }
+  next(error)
 }
 
 app.use(errorHandler)
